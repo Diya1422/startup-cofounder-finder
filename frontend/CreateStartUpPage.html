@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Startup</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+body {
+    background: #0f172a;
+    color: white;
+}
+
+.profile-container {
+    max-width: 200px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+button {
+    background: #38bdf8;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 20%;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.4;
+}
+
+.profile-view {
+    display: none;
+}
+
+.profile-item {
+    margin: 10px 0;
+    padding: 10px;
+    background: #0f172a;
+    border-radius: 8px;
+}
+
+.tag {
+    display: inline-block;
+    background: #38bdf8;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin: 5px 5px 0 0;
+    font-size: 12px;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="left-nav">
+        <button onclick="history.back()" class="back-btn">
+            Back
+        </button>
+    </div>
+    <div class="center-nav">
+       <h2>🚀 Startup Finder</h2>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Create Startup Idea</h2>
+
+    <form id="startupForm">
+        <input type="text" placeholder="Startup Title" required>
+        <textarea placeholder="Describe your idea" required></textarea>
+        <input type="text" placeholder="Startup Domain" required>
+        <input type="text" placeholder="Required Skills" required>
+        <button type="submit">Create Startup</button>
+    </form>
+</div>
+
+<script>
+document.getElementById("startupForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        alert("Login required");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const inputs = e.target;
+
+    const data = {
+        title: inputs[0].value,
+        description: inputs[1].value,
+        domain: inputs[2].value,
+        required_skills: inputs[3].value,
+        created_by: user.id
+    };
+
+    try {
+        const res = await fetch("http://localhost:5000/api/startups/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        console.log("STATUS:", res.status);
+        const result = await res.json();
+        console.log("RESPONSE:", result);
+        alert(result.message);
+
+        window.location.href = "dashboard.html";
+
+    } catch (err) {
+        console.log(err);
+    }
+});
+</script>
+
+</body>
+</html>

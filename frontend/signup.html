@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Startup Finder - Register</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Back button */
+    .buttons {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+    }
+    .button-link {
+      background-color: #2a7ae2;
+      color: white;
+      padding: 8px 15px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 600;
+    }
+    .button-link:hover {
+      background-color: #1a5dc0;
+    }
+    /* Navbar */
+    .navbar {
+      background-color: #1e293b;
+      padding: 15px 40px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      color: white;
+    }
+    .navbar nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .navbar nav a:hover {
+      text-decoration: underline;
+    }
+    /* Register Card */
+    .hero {
+      background: white;
+      margin: 70px auto;
+      padding: 40px;
+      width: 350px;
+      text-align: center;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .hero h2 {
+      color: #b44c74;
+      margin-bottom: 20px;
+    }
+    .auth-form input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .auth-form button {
+      width: 100%;
+      padding: 12px;
+      background-color: #b44c74;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+    .auth-form button:hover {
+      background-color: #a03e64;
+    }
+    /* Login link */
+    .login-link {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #555;
+    }
+    .login-link a {
+      color: #b44c74;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    /* Footer */
+    footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <!-- Back to Home -->
+  <div class="buttons">
+    <a href="index.html" class="button-link">Home</a>
+  </div>
+  <!-- Register Section -->
+  <section class="hero">
+    <h2>Create Your  Account</h2>
+    <form class="auth-form"id="registerForm">
+    <input type="text" id="fullname" placeholder="Full Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+    <button type="submit">Create account</button>
+      <p class="login-link">
+        Already have an account? <a href="login.html">Login</a>
+      </p>
+    </form>
+  </section>
+  <script>
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const fullname = document.getElementById("fullname").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    // 1. Validation
+    if(password !== confirmPassword){
+        alert("Passwords do not match");
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:5000/api/users/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                fullname,
+                email,
+                password
+            })
+        });
+
+        const data = await res.json();
+
+        if(res.ok){
+            alert(data.message);
+            window.location.href = "login.html";
+        }
+        else{
+            alert(data.message);
+        }
+
+    } catch (error) {
+        console.log(error);
+        alert("Server error");
+    }
+});
+</script>
+</body>
+</html>

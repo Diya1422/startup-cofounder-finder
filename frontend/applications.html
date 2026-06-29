@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>My Applications</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+body{
+
+background:#0f172a;
+
+color:white;
+
+font-family:Arial;
+
+}
+
+.container{
+
+width:40%;
+max-width:1300px;
+margin:auto;
+padding:40px 20px;
+
+}
+
+.grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+gap:20px;
+
+}
+
+.card{
+
+background:#1e293b;
+
+padding:25px;
+
+border-radius:15px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.35);
+
+transition:.3s;
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+}
+
+.status{
+
+padding:6px 12px;
+
+border-radius:20px;
+
+display:inline-block;
+
+font-weight:bold;
+
+margin-top:10px;
+width: 20%;
+
+}
+
+.pending{
+
+background:#facc15;
+
+color:black;
+
+}
+
+.accepted{
+
+background:#22c55e;
+
+color:white;
+
+}
+
+.rejected{
+
+background:#ef4444;
+
+color:white;
+
+}
+
+button{
+
+margin-top:18px;
+
+width:20%;
+
+padding:12px;
+
+background:#38bdf8;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+color:white;
+
+font-size:16px;
+
+transition:.3s;
+}
+
+#popup{
+
+position:fixed;
+
+top:20px;
+
+right:20px;
+
+background:#22c55e;
+
+padding:15px 25px;
+
+border-radius:8px;
+
+display:none;
+
+font-weight:bold;
+
+}
+
+.modal{
+
+display:none;
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+width:20%;
+
+height:100%;
+
+background:rgba(0,0,0,.7);
+
+justify-content:center;
+
+align-items:center;
+
+}
+
+.modal-content{
+
+background:#1e293b;
+
+padding:25px;
+
+border-radius:10px;
+
+width:200px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<div class="left-nav">
+
+<button onclick="history.back()" class="back-btn">
+
+Back
+
+</button>
+
+</div>
+
+<div class="center-nav">
+
+<h2>🚀 Startup Finder</h2>
+
+</div>
+
+</nav>
+
+<div class="container">
+
+<h1>My Applications</h1>
+
+<div class="grid" id="applications"></div>
+
+</div>
+
+<div id="popup">
+
+Loaded Successfully
+
+</div>
+
+<div class="modal" id="modal">
+
+<div class="modal-content">
+
+<h2 id="title"></h2>
+
+<p id="domain"></p>
+
+<p id="description"></p>
+
+<p id="skills"></p>
+
+<button onclick="closeModal()">Close</button>
+
+</div>
+
+</div>
+
+<script>
+
+const user=JSON.parse(localStorage.getItem("user"));
+
+async function loadApplications(){
+
+const res=await fetch(
+
+`http://localhost:5000/api/applications/my/${user.id}`
+
+);
+
+const data=await res.json();
+
+const grid=document.getElementById("applications");
+
+grid.innerHTML="";
+
+if(data.length===0){
+
+grid.innerHTML="<h2>No Applications Yet</h2>";
+
+return;
+
+}
+
+data.forEach(startup=>{
+
+grid.innerHTML+=`
+
+<div class="card">
+
+<h3>${startup.title}</h3>
+
+<p><b>Domain:</b> ${startup.domain}</p>
+
+<p><b>Skills:</b> ${startup.required_skills}</p>
+
+<span class="status ${startup.status.toLowerCase()}">
+
+${startup.status}
+
+</span>
+
+<button
+
+onclick='viewStartup(
+
+${JSON.stringify(startup)}
+
+)'>
+
+View Startup
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+function viewStartup(startup){
+
+document.getElementById("modal").style.display="flex";
+
+document.getElementById("title").innerHTML=startup.title;
+
+document.getElementById("domain").innerHTML="<b>Domain:</b> "+startup.domain;
+
+document.getElementById("description").innerHTML="<b>Description:</b><br>"+startup.description;
+
+document.getElementById("skills").innerHTML="<b>Skills:</b> "+startup.required_skills;
+
+}
+
+function closeModal(){
+
+document.getElementById("modal").style.display="none";
+
+}
+
+loadApplications();
+
+</script>
+
+</body>
+
+</html>

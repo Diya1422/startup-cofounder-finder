@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Browse Startups</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="left-nav">
+        <button onclick="window.location.href='dashboard.html'" class="back-btn">Back</button>
+    </div>
+    <div class="center-nav">
+        <h2>🚀 Startup Finder</h2>
+    </div>
+</nav>
+<div class="container">
+<h1>Browse Startup Ideas</h1>
+<input
+type="text"
+placeholder="Search startup, skill, domain..."
+class="search-box">
+<div class="grid" id="startupGrid">
+</div>
+</div>
+</div>
+<script>
+const API = "http://localhost:5000/api/startups";
+
+const grid = document.getElementById("startupGrid");
+const searchBox = document.querySelector(".search-box");
+
+let startups = [];
+
+// ---------------- LOAD STARTUPS ----------------
+
+async function loadStartups() {
+
+    try{
+
+        const res = await fetch(API);
+
+        startups = await res.json();
+
+        displayStartups(startups);
+
+    }catch(err){
+
+        console.log(err);
+
+    }
+
+}
+
+// ---------------- DISPLAY ----------------
+
+function displayStartups(data){
+
+    grid.innerHTML="";
+
+    if(data.length===0){
+
+        grid.innerHTML=`
+        <h3 style="text-align:center;color:white;">
+        No Startup Found
+        </h3>
+        `;
+
+        return;
+    }
+
+    data.forEach(startup=>{
+
+        grid.innerHTML += `
+
+        <div class="card">
+
+            <h3>${startup.title}</h3>
+
+            <p>
+            ${startup.description}
+            </p>
+
+            <p>
+            <b>Domain :</b>
+            ${startup.domain}
+            </p>
+
+            <p>
+            <b>Skills :</b>
+            ${startup.required_skills}
+            </p>
+
+            <button onclick="viewDetails(
+                '${startup.title}',
+                '${startup.description}',
+                '${startup.domain}',
+                '${startup.required_skills}'
+            )">
+
+            View Details
+
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+// ---------------- SEARCH ----------------
+
+searchBox.addEventListener("keyup",()=>{
+
+    const text = searchBox.value.toLowerCase();
+
+    const filtered = startups.filter(s=>{
+
+        return (
+
+            s.title.toLowerCase().includes(text)
+
+            ||
+
+            s.domain.toLowerCase().includes(text)
+
+            ||
+
+            s.required_skills.toLowerCase().includes(text)
+
+            ||
+
+            s.description.toLowerCase().includes(text)
+
+        );
+
+    });
+
+    displayStartups(filtered);
+
+});
+
+// ---------------- MODAL ----------------
+
+const modal = document.createElement("div");
+
+modal.style.display="none";
+
+modal.style.position="fixed";
+
+modal.style.left="0";
+
+modal.style.top="0";
+
+modal.style.width="100%";
+
+modal.style.height="100%";
+
+modal.style.background="rgba(0,0,0,.6)";
+
+modal.style.justifyContent="center";
+
+modal.style.alignItems="center";
+
+modal.innerHTML=`
+
+<div style="
+background:white;
+padding:25px;
+width:450px;
+border-radius:10px;
+color:black;
+">
+
+<h2 id="mTitle"></h2>
+
+<p id="mDescription"></p>
+
+<p id="mDomain"></p>
+
+<p id="mSkills"></p>
+
+<button onclick="closeModal()">
+
+Close
+
+</button>
+
+</div>
+
+`;
+
+document.body.appendChild(modal);
+
+function viewDetails(title,description,domain,skills){
+
+    document.getElementById("mTitle").innerHTML=title;
+
+    document.getElementById("mDescription").innerHTML=description;
+
+    document.getElementById("mDomain").innerHTML="<b>Domain :</b> "+domain;
+
+    document.getElementById("mSkills").innerHTML="<b>Skills :</b> "+skills;
+
+    modal.style.display="flex";
+
+}
+
+function closeModal(){
+
+    modal.style.display="none";
+
+}
+
+// ---------------- BACK BUTTON ----------------
+
+document.querySelector(".back-btn").onclick=()=>{
+
+    window.location.href="dashboard.html";
+
+}
+
+// ---------------- START ----------------
+
+loadStartups();
+</script>
+</body>
+</html>

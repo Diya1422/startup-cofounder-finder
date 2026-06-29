@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Startup Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <h2>🚀 Startup Finder</h2>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="browse-startups.html">Startups</a></li>
+        <li><a href="find-cofounder.html">Co-Founders</a></li>
+        <li><a href="applications.html">Applications</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li id="authLink"><a href="login.html">Login</a></li>
+    </ul>
+</nav>
+
+<section class="hero-section">
+    <h1>Welcome Back 👋</h1>
+    <a href="CreateStartUpPage.html" class="btn">Create Startup</a>
+</section>
+
+<section class="dashboard-section container">
+    <h2>🔥 Startup Opportunities</h2>
+    <br>
+    <div id="startupContainer" class="card-container"></div>
+</section>
+
+<script>
+const API = "http://localhost:5000/api/startups";
+
+/* ---------------- AUTH UI ---------------- */
+function setupNavbarAuth() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const authLink = document.getElementById("authLink");
+
+    if (user) {
+        authLink.innerHTML = `
+            <a href="#" onclick="handleLogout(event)" style="color:#ef4444;font-weight:bold;">
+                Logout
+            </a>
+        `;
+    }
+}
+
+function handleLogout(event) {
+    event.preventDefault();
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+
+    alert("Logged out successfully!");
+    window.location.href = "login.html";
+}
+
+/* ---------------- LOAD STARTUPS ---------------- */
+async function loadStartups() {
+    try {
+        const res = await fetch(API);
+        const data = await res.json();
+
+        const container = document.getElementById("startupContainer");
+        container.innerHTML = "";
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `
+                <div class="card">
+                    <h3>No Startups Found</h3>
+                    <p>Create the first startup idea 🚀</p>
+                </div>
+            `;
+            return;
+        }
+
+        data.forEach(startup => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+                <h3>${startup.title}</h3>
+                <p><b>Domain:</b> ${startup.domain}</p>
+                <p>${startup.description}</p>
+                <p><b>Skills:</b> ${startup.required_skills}</p>
+                <button id="apply-${startup.id}" onclick="applyStartup(${startup.id}, this)">
+                    Apply
+                </button>
+            `;
+
+            container.appendChild(card);
+        });
+
+    } catch (err) {
+        console.log("Load Error:", err);
+    }
+}
+
+/* ---------------- APPLY STARTUP ---------------- */
+async function applyStartup(startupId, btn) {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        alert("Please login first");
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+        btn.disabled = true;
+        btn.innerText = "Applying...";
+
+        const res = await fetch("http://localhost:5000/api/applications/apply", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                startup_id: startupId,
+                applicant_id: user.id
+            })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+           showPopup(data.message);
+           btn.innerText = "Applied ✔";
+           btn.disabled = true;
+        } else {
+             alert(data.message);
+       }
+     } catch (err) {
+        console.log(err);
+        btn.disabled = false;
+        btn.innerText = "Apply";
+    }
+}
+/* ---------------- POPUP ---------------- */
+function showPopup(message) {
+    const popup = document.createElement("div");
+    popup.innerText = message;
+    alert("applied successfully");
+    Object.assign(popup.style, {
+        position: "fixed",
+        top: "20px",
+        right: "20px",
+        background: "#22c55e",
+        color: "white",
+        padding: "12px 20px",
+        borderRadius: "8px",
+        zIndex: "99999",
+        fontWeight: "bold",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.3)"
+    });
+
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+        popup.remove();
+    }, 2000);
+}
+/* ---------------- INIT ---------------- */
+setupNavbarAuth();
+loadStartups();
+</script>
+
+</body>
+</html>

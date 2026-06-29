@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Find Co-Founder</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+body{
+background:#0f172a;
+color:white;
+font-family:Arial;
+}
+
+.container{
+width:90%;
+margin:auto;
+padding:30px;
+}
+
+.search-box{
+width:100%;
+padding:12px;
+margin:20px 0;
+border:none;
+border-radius:8px;
+font-size:16px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
+}
+
+.card{
+
+background:#1e293b;
+
+padding:20px;
+
+border-radius:10px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.3);
+
+}
+
+.card h3{
+
+margin-bottom:10px;
+
+color:#38bdf8;
+
+}
+
+.tag{
+
+display:inline-block;
+
+background:#38bdf8;
+
+color:black;
+
+padding:5px 10px;
+
+border-radius:20px;
+
+margin:5px;
+
+font-size:13px;
+
+}
+
+button{
+
+margin-top:15px;
+
+width:20%;
+
+padding:12px;
+
+background:#38bdf8;
+
+border:none;
+
+border-radius:8px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+button:hover{
+
+opacity:.85;
+
+}
+
+.popup{
+
+position:fixed;
+
+top:20px;
+
+right:20px;
+
+background:#22c55e;
+
+color:white;
+
+padding:15px 25px;
+
+border-radius:10px;
+
+display:none;
+
+font-weight:bold;
+
+z-index:999;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<div class="left-nav">
+
+<button onclick="history.back()" class="back-btn">
+
+Back
+
+</button>
+
+</div>
+
+<div class="center-nav">
+
+<h2>🚀 Startup Finder</h2>
+
+</div>
+
+</nav>
+
+<div class="container">
+
+<h1>Find Co-Founders</h1>
+
+<input
+
+id="search"
+
+class="search-box"
+
+placeholder="Search by name, college, course or skills...">
+
+<div class="grid" id="profiles"></div>
+
+</div>
+
+<div class="popup" id="popup">
+
+Request Sent Successfully 🎉
+
+</div>
+
+<script>
+
+const API="http://localhost:5000/api/profile/all";
+
+const TOKEN=localStorage.getItem("token");
+
+let allProfiles=[];
+
+async function loadProfiles(){
+
+const res=await fetch(API);
+
+const data=await res.json();
+
+allProfiles=data;
+
+displayProfiles(data);
+
+}
+
+function displayProfiles(profiles){
+
+const grid=document.getElementById("profiles");
+
+grid.innerHTML="";
+
+if(profiles.length===0){
+
+grid.innerHTML="<h3>No Profiles Found</h3>";
+
+return;
+
+}
+
+profiles.forEach(profile=>{
+
+const card=document.createElement("div");
+
+card.className="card";
+
+let skillsHTML="";
+
+if(profile.skills){
+
+profile.skills.split(",").forEach(skill=>{
+
+skillsHTML+=`<span class="tag">${skill.trim()}</span>`;
+
+});
+
+}
+
+card.innerHTML=`
+
+<h3>${profile.fullname}</h3>
+
+<p><b>College:</b> ${profile.college||"-"}</p>
+
+<p><b>Course:</b> ${profile.course||"-"}</p>
+
+<p>${profile.bio||""}</p>
+
+<div>${skillsHTML}</div>
+
+<button onclick="sendRequest(${profile.id})">
+
+Connect
+
+</button>
+
+`;
+
+grid.appendChild(card);
+
+});
+
+}
+
+document.getElementById("search").addEventListener("input",function(){
+
+const value=this.value.toLowerCase();
+
+const filtered=allProfiles.filter(profile=>{
+
+return(
+
+(profile.fullname||"").toLowerCase().includes(value)||
+
+(profile.college||"").toLowerCase().includes(value)||
+
+(profile.course||"").toLowerCase().includes(value)||
+
+(profile.skills||"").toLowerCase().includes(value)
+
+);
+
+});
+
+displayProfiles(filtered);
+
+});
+
+async function sendRequest(receiverId){
+
+if(!TOKEN){
+
+alert("Please Login First");
+
+return;
+
+}
+
+const res=await fetch(
+
+"http://localhost:5000/api/cofounders/send",
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json",
+
+"Authorization":TOKEN
+
+},
+
+body:JSON.stringify({
+
+receiverId
+
+})
+
+}
+
+);
+
+const data=await res.json();
+
+if(res.ok){
+
+showPopup();
+
+}
+
+else{
+
+alert(data.message);
+
+}
+
+}
+
+function showPopup(){
+
+const popup=document.getElementById("popup");
+
+popup.style.display="block";
+
+setTimeout(()=>{
+
+popup.style.display="none";
+
+},2000);
+
+}
+
+loadProfiles();
+
+</script>
+
+</body>
+
+</html>

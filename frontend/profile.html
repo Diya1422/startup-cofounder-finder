@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Profile | Startup Finder</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+body {
+    background: #0f172a;
+    color: white;
+}
+
+.profile-container {
+    max-width: 850px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+input, textarea {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+button {
+    background: #38bdf8;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 20%;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.4;
+}
+
+.profile-view {
+    display: none;
+}
+
+.profile-item {
+    margin:  auto;
+    padding: 10px;
+    background: #0f172a;
+    border-radius: 8px;
+}
+
+.tag {
+    display: inline-block;
+    background: #38bdf8;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin: 5px 5px 0 0;
+    font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="left-nav">
+        <button onclick="history.back()" class="back-btn">Back</button>
+    </div>
+    <div class="center-nav">
+        <h2>🚀 Startup Finder</h2>
+    </div>
+</nav>
+
+<div class="profile-container">
+
+<!-- FORM -->
+<div class="card" id="formCard">
+    <h2>Create Your Profile</h2>
+
+    <input id="fullname" placeholder="Full Name">
+    <input id="college" placeholder="College">
+    <input id="course" placeholder="Course">
+    <textarea id="bio" placeholder="Bio"></textarea>
+    <input id="skills" placeholder="Skills (comma separated)">
+    <input id="github" placeholder="GitHub Link">
+    <input id="linkedin" placeholder="LinkedIn Link">
+
+    <button onclick="saveProfile()">Save Profile</button>
+</div>
+
+<!-- PROFILE VIEW -->
+<div class="card profile-view" id="profileCard">
+    <h2>Your Profile</h2>
+
+    <div class="profile-item"><b>Name:</b> <span id="v_name"></span></div>
+    <div class="profile-item"><b>College:</b> <span id="v_college"></span></div>
+    <div class="profile-item"><b>Course:</b> <span id="v_course"></span></div>
+    <div class="profile-item"><b>Bio:</b> <span id="v_bio"></span></div>
+
+    <div class="profile-item">
+        <b>Skills:</b>
+        <div id="v_skills"></div>
+    </div>
+
+    <div class="profile-item"><b>GitHub:</b> <span id="v_github"></span></div>
+    <div class="profile-item"><b>LinkedIn:</b> <span id="v_linkedin"></span></div>
+
+    <button onclick="editProfile()">Edit Profile</button>
+</div>
+
+</div>
+<script>
+
+const API = "http://localhost:5000/api/profile";
+
+const token = localStorage.getItem("token");
+
+async function saveProfile() {
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if(!user){
+        alert("Please login first");
+        window.location.href="login.html";
+        return;
+    }
+
+    const data = {
+
+        college: document.getElementById("college").value,
+
+        course: document.getElementById("course").value,
+
+        bio: document.getElementById("bio").value,
+
+        skills: document.getElementById("skills").value,
+
+        github: document.getElementById("github").value,
+
+        linkedin: document.getElementById("linkedin").value
+
+    };
+
+    const res = await fetch(API + "/save",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":token
+        },
+
+        body:JSON.stringify(data)
+
+    });
+
+    const result = await res.json();
+
+    alert(result.message);
+
+    loadProfile();
+
+}
+
+async function loadProfile(){
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if(!user){
+        return;
+    }
+
+    const res = await fetch(API + "/my",{
+
+        headers:{
+            "Authorization":token
+        }
+
+    });
+
+    if(!res.ok){
+        return;
+    }
+
+    const profile = await res.json();
+
+    if(!profile){
+        return;
+    }
+
+    document.getElementById("formCard").style.display="none";
+    document.getElementById("profileCard").style.display="block";
+
+    document.getElementById("v_name").innerText=user.fullname;
+    document.getElementById("v_college").innerText=profile.college || "";
+    document.getElementById("v_course").innerText=profile.course || "";
+    document.getElementById("v_bio").innerText=profile.bio || "";
+    document.getElementById("v_github").innerHTML=
+    `<a href="${profile.github}" target="_blank">${profile.github}</a>`;
+
+    document.getElementById("v_linkedin").innerHTML=
+    `<a href="${profile.linkedin}" target="_blank">${profile.linkedin}</a>`;
+
+    const skillBox=document.getElementById("v_skills");
+
+    skillBox.innerHTML="";
+
+    if(profile.skills){
+
+        profile.skills.split(",").forEach(skill=>{
+
+            const span=document.createElement("span");
+
+            span.className="tag";
+
+            span.innerText=skill.trim();
+
+            skillBox.appendChild(span);
+
+        });
+
+    }
+
+}
+
+async function editProfile(){
+
+    const res=await fetch(API+"/my",{
+
+        headers:{
+            "Authorization":token
+        }
+
+    });
+
+    const profile=await res.json();
+
+    document.getElementById("formCard").style.display="block";
+    document.getElementById("profileCard").style.display="none";
+
+    document.getElementById("fullname").value=
+    JSON.parse(localStorage.getItem("user")).fullname;
+
+    document.getElementById("college").value=profile.college || "";
+
+    document.getElementById("course").value=profile.course || "";
+
+    document.getElementById("bio").value=profile.bio || "";
+
+    document.getElementById("skills").value=profile.skills || "";
+
+    document.getElementById("github").value=profile.github || "";
+
+    document.getElementById("linkedin").value=profile.linkedin || "";
+
+}
+
+loadProfile();
+
+</script>
+
+</body>
+</html>

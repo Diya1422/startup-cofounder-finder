@@ -1,0 +1,456 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background: #1e293b;
+}
+.navbar a {
+  color: white;
+  margin-left: 15px;
+  text-decoration: none;
+}
+.hero {
+  text-align: center;
+  margin-top: 100px;
+}
+.hero h1 {
+  font-size: 40px;
+}
+.btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #38bdf8;
+  color: black;
+  text-decoration: none;
+  border-radius: 5px;
+}
+.welcome{
+  padding:40px;
+  text-align:center;
+}
+.action-buttons{
+  margin-top:20px;
+}
+.action-buttons button{
+  padding:12px 20px;
+  margin:10px;
+  cursor:pointer;
+}
+.stats{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  padding:20px;
+}
+.stat-card{
+  background:#1e293b;
+  padding:20px;
+  width:100%;
+  text-align:center;
+  border-radius:10px;
+}
+.activity{
+  padding:20px;
+}
+.nav-right{
+  display:flex;
+  gap:10px;
+}
+.profile-btn{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  border:none;
+}
+.container{
+max-width:1100px;
+margin:0  auto;
+padding:20px;
+box-sizing: border-box;
+}
+.auth-container{
+width:400px;
+margin:80px auto;
+background:#1e293b;
+padding:30px;
+border-radius:10px;
+}
+form{
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+input,
+textarea{
+padding:12px;
+border:none;
+border-radius:6px;
+}
+button{
+padding:12px;
+cursor:pointer;
+border:none;
+border-radius:6px;
+}
+.search-box{
+width:100%;
+padding:12px;
+margin-bottom:20px;
+}
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 50px;
+    background:#1e293b;
+}
+.nav-links{
+    display:flex;
+    gap:20px;
+    list-style:none;
+}
+.nav-links a{
+    color:white;
+    text-decoration:none;
+}
+.hero-section{
+    text-align:center;
+    padding:60px 20px;
+}
+.hero-buttons{
+    margin-top:20px;
+}
+.btn{
+    display:inline-block;
+    padding:12px 20px;
+    background:#38bdf8;
+    color:black;
+    text-decoration:none;
+    border-radius:8px;
+    margin:10px;
+}
+.stats-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+    flex-wrap:wrap;
+    padding:20px;
+}
+.stat-card{
+    background:#1e293b;
+    width:220px;
+    padding:20px;
+    border-radius:10px;
+    text-align:center;
+}
+.dashboard-section{
+    max-width: 1100px; 
+    margin: 0 auto;    
+    padding: 30px 20px;
+    box-sizing: border-box;
+}
+
+/* FIXED CONTAINER: Enforces a uniform, strict automatic grid layout row */
+.card-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    align-items: stretch; /* Forces equal height profiles across the row */
+}
+
+/* FIXED CARD: Uses flex direction layout to push buttons cleanly to the bottom element */
+.card{
+    background:#1e293b;
+    padding:20px;
+    border-radius:10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+/* FIXED BUTTON: Re-anchored to the absolute base layout line block */
+.card button{
+    margin-top: auto;
+    width:100%;
+    padding:10px;
+}
+.activity-list{
+    background:#1e293b;
+    padding:20px;
+    border-radius:10px;
+}
+.activity-list li{
+    margin-bottom:10px;
+}
+.left-nav{
+    flex:1;
+}
+.center-nav{
+    flex:1;
+    text-align:center;
+}
+.right-nav{
+    flex:1;
+    display:flex;
+    justify-content:flex-end;
+    gap:15px;
+}
+
+.right-nav a{
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+.back-btn{
+    background:#38bdf8;
+    color:black;
+    border:none;
+    padding:10px 15px;
+    border-radius:6px;
+    cursor:pointer;
+}
+.back-btn:hover{
+    opacity:0.8;
+}
+
+button {
+    width: 20%;
+    min-width: 120px;
+    padding: 10px 15px;
+    background: #38bdf8;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s ease;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+.container {
+    width: auto;
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
+/* ========================================= */
+/* RESPONSIVE DESIGN */
+/* ========================================= */
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    overflow-x:hidden;
+}
+
+img{
+    max-width:100%;
+    height:auto;
+}
+
+/* Containers */
+
+.container,
+.dashboard-section{
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+}
+
+/* Cards */
+
+.card,
+.stat-card{
+    width:100%;
+}
+
+/* Grid */
+
+.grid,
+.card-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+}
+
+/* Forms */
+
+form{
+    width:100%;
+}
+
+input,
+textarea,
+select{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+}
+
+/* Buttons */
+
+button{
+    min-width:120px;
+    width:auto;
+    padding:12px 20px;
+}
+
+.card button{
+    width:100%;
+}
+
+.btn{
+    display:inline-block;
+    padding:12px 20px;
+}
+
+/* Navbar */
+
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.nav-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    justify-content:center;
+}
+
+.nav-links li{
+    list-style:none;
+}
+
+/* Profile */
+
+.profile-container{
+    max-width:700px;
+    width:95%;
+    margin:auto;
+}
+
+/* Authentication */
+
+.auth-container{
+    width:100%;
+    max-width:420px;
+}
+
+/* ==================== */
+/* TABLET */
+/* ==================== */
+
+@media(max-width:992px){
+
+.hero-section h1{
+    font-size:36px;
+}
+
+.navbar{
+    padding:15px;
+}
+
+}
+
+/* ==================== */
+/* MOBILE */
+/* ==================== */
+
+@media(max-width:768px){
+
+.navbar{
+    flex-direction:column;
+    text-align:center;
+}
+
+.left-nav,
+.center-nav,
+.right-nav{
+    width:100%;
+    text-align:center;
+}
+
+.right-nav{
+    justify-content:center;
+}
+
+.nav-links{
+    flex-direction:column;
+    gap:10px;
+}
+
+.hero-section{
+    padding:40px 15px;
+}
+
+.hero-section h1{
+    font-size:30px;
+}
+
+.container{
+    width:95%;
+}
+
+button{
+    width:100%;
+}
+
+.back-btn{
+    width:auto;
+}
+
+}
+
+/* ==================== */
+/* SMALL MOBILE */
+/* ==================== */
+
+@media(max-width:480px){
+
+.hero-section h1{
+    font-size:24px;
+}
+
+h1{
+    font-size:24px;
+}
+
+h2{
+    font-size:20px;
+}
+
+.card{
+    padding:15px;
+}
+
+button{
+    font-size:15px;
+}
+
+}
