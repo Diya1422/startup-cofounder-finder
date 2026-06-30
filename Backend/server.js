@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
     res.send("🚀 Startup Finder Backend Running");
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Server Running On Port ${PORT}`);
